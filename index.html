@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Yiyu | Control Financiero Móvil</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Font: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
+          colors: {
+            paw: {
+              cream: '#FAF7F2',
+              peach: '#FFE8DF',
+              rose: '#FCD5CE',
+              mint: '#D8F3DC',
+              mintdark: '#95D5B2',
+              butter: '#FFF3B0',
+              lavender: '#E8DFF5',
+              dark: '#2B2627'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { 
+      -webkit-tap-highlight-color: transparent; 
+      background-color: #FAF7F2;
+    }
+    input[type="number"]::-webkit-inner-spin-button, 
+    input[type="number"]::-webkit-outer-spin-button { 
+      -webkit-appearance: none; 
+      margin: 0; 
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 4px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background-color: #FCD5CE;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="bg-paw-cream text-stone-900 antialiased pb-24 select-none">
+
+  <!-- ========================================== -->
+  <!-- HEADER PRINCIPAL / IDENTIDAD YIYU          -->
+  <!-- ========================================== -->
+  <header class="bg-gradient-to-b from-[#FFF5F2] to-paw-cream px-5 pt-6 pb-4 rounded-b-[2.5rem] border-b border-rose-100/80 shadow-sm sticky top-0 z-30 backdrop-blur-md bg-opacity-95">
+    
+    <div class="flex items-center justify-between mb-3.5">
+      <div class="flex items-center gap-2.5">
+        <div class="w-11 h-11 rounded-2xl bg-white shadow-sm border border-rose-200/60 flex items-center justify-center text-2xl">
+          🐶
+        </div>
+        <div>
+          <div class="flex items-center gap-1.5">
+            <h1 class="text-xl font-black tracking-tight leading-none text-stone-900">Yiyu</h1>
+            <span class="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 border border-rose-200">
+              🐾 Finanzas
+            </span>
+          </div>
+          <p class="text-[11px] font-bold text-stone-500 mt-0.5">Control de Tienda & Estética</p>
+        </div>
+      </div>
+
+      <!-- INSIGNIA DISCRETA DE ESTADO (AUTOMÁTICA) -->
+      <div id="badgeSync" class="flex items-center gap-1.5 bg-white/90 border border-stone-200/80 px-2.5 py-1 rounded-full shadow-2xs">
+        <span id="dotSync" class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span id="lblSyncText" class="text-[10px] font-black text-stone-700">Al día</span>
+      </div>
+    </div>
+
+    <!-- SELECTOR DE PERÍODO (MES Y AÑO PASTEL) -->
+    <div class="grid grid-cols-2 gap-2 bg-white/90 p-1.5 rounded-2xl border border-rose-200/80 shadow-2xs">
+      <div class="relative">
+        <select id="selectMes" onchange="cambiarPeriodo()" class="w-full bg-paw-peach/40 text-stone-900 font-black text-xs px-3 py-2 rounded-xl outline-none border border-rose-200/60 focus:ring-2 focus:ring-rose-300">
+          <option value="1">Enero</option>
+          <option value="2">Febrero</option>
+          <option value="3">Marzo</option>
+          <option value="4">Abril</option>
+          <option value="5">Mayo</option>
+          <option value="6">Junio</option>
+          <option value="7">Julio</option>
+          <option value="8">Agosto</option>
+          <option value="9">Septiembre</option>
+          <option value="10" selected>Octubre</option>
+          <option value="11">Noviembre</option>
+          <option value="12">Diciembre</option>
+        </select>
+      </div>
+      <div class="relative">
+        <select id="selectAnio" onchange="cambiarPeriodo()" class="w-full bg-paw-peach/40 text-stone-900 font-black text-xs px-3 py-2 rounded-xl outline-none border border-rose-200/60 focus:ring-2 focus:ring-rose-300">
+          <option value="2025">Año 2025</option>
+          <option value="2026" selected>Año 2026</option>
+          <option value="2027">Año 2027</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <!-- PESTAÑAS DE NAVEGACIÓN (TIENDA / ESTÉTICA / CONSOLIDADO) -->
+  <div class="px-5 mt-3.5">
+    <div class="bg-stone-200/60 p-1.5 rounded-2xl flex items-center gap-1.5 shadow-inner border border-stone-200">
+      <button onclick="cambiarVista('tienda')" id="btnTabTienda" class="flex-1 py-2.5 text-xs font-black rounded-xl transition-all duration-200 bg-white text-stone-900 shadow-sm flex items-center justify-center gap-1.5 border border-orange-200/60">
+        🛍️ Tienda
+      </button>
+      <button onclick="cambiarVista('estetica')" id="btnTabEstetica" class="flex-1 py-2.5 text-xs font-black rounded-xl transition-all duration-200 text-stone-600 flex items-center justify-center gap-1.5">
+        ✂️ Estética
+      </button>
+      <button onclick="cambiarVista('consolidado')" id="btnTabConsolidado" class="flex-1 py-2.5 text-xs font-black rounded-xl transition-all duration-200 text-stone-600 flex items-center justify-center gap-1.5">
+        📊 Consolidado
+      </button>
+    </div>
+  </div>
+
+  <main class="px-5 mt-4 space-y-4">
+
+    <!-- ========================================== -->
+    <!-- SECCIÓN OPERATIVA (TIENDA O ESTÉTICA)       -->
+    <!-- ========================================== -->
+    <div id="seccionNegocio" class="space-y-4">
+
+      <!-- ENCABEZADO DEL NEGOCIO ACTIVO -->
+      <div class="flex items-center justify-between px-1">
+        <div>
+          <h2 id="tituloNegocio" class="text-sm font-black text-stone-900 tracking-tight flex items-center gap-1.5">
+            <span>🛍️</span> Tienda de Productos & Accesorios
+          </h2>
+          <p id="subtituloPeriodo" class="text-[11px] font-bold text-stone-500">Período: Octubre 2026</p>
+        </div>
+        <span id="badgeNegocio" class="text-[10px] font-black px-2.5 py-1 bg-amber-100 text-amber-900 border border-amber-300 rounded-full">
+          VENTA PRODUCTOS
+        </span>
+      </div>
+
+      <!-- ========================================== -->
+      <!-- TARJETA 1: VENTAS ACUMULATIVAS DEL MES     -->
+      <!-- ========================================== -->
+      <div class="bg-white rounded-3xl p-5 shadow-sm border border-stone-200/80 space-y-4">
+        
+        <div class="flex items-center justify-between border-b border-stone-100 pb-3">
+          <div>
+            <h3 class="text-xs font-black text-stone-900 flex items-center gap-1.5">
+              <span>🦴</span> Cortes & Ventas
+            </h3>
+            <p class="text-[10px] font-bold text-stone-500">Ingresos registrados en este mes</p>
+          </div>
+          <button onclick="abrirModalVenta()" class="text-xs font-black text-white bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-500 hover:to-teal-600 active:scale-95 px-3.5 py-2 rounded-2xl shadow-sm shadow-emerald-200 transition-all flex items-center gap-1.5">
+            <span class="text-sm font-black">+</span> Registrar Venta
+          </button>
+        </div>
+
+        <!-- KPI PILLS DE RESUMEN DE VENTAS -->
+        <div class="grid grid-cols-3 gap-2 text-center">
+          <div class="bg-amber-50/70 p-2.5 rounded-2xl border border-amber-200/80">
+            <p class="text-[10px] font-black text-amber-900 uppercase">Venta Total</p>
+            <p id="lblTotalVentasAcum" class="text-xs font-black text-stone-900 mt-0.5">$0.00</p>
+          </div>
+          <div class="bg-emerald-50/70 p-2.5 rounded-2xl border border-emerald-200/80">
+            <p class="text-[10px] font-black text-emerald-900 uppercase">Ingreso Neto</p>
+            <p id="lblTotalNetoAcum" class="text-xs font-black text-emerald-800 mt-0.5">$0.00</p>
+          </div>
+          <div class="bg-purple-50/70 p-2.5 rounded-2xl border border-purple-200/80">
+            <p class="text-[10px] font-black text-purple-900 uppercase">Tickets</p>
+            <p id="lblTotalTicketsAcum" class="text-xs font-black text-stone-900 mt-0.5">0</p>
+          </div>
+        </div>
+
+        <!-- LISTADO DINÁMICO DE VENTAS (ESTRICTAMENTE FILTRADO POR MES) -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <p id="lblTituloHistorialVentas" class="text-[11px] font-black text-stone-800 uppercase tracking-wider">Historial de Ventas:</p>
+            <span class="text-[10px] font-bold text-stone-500">Toca ✏️ para editar</span>
+          </div>
+          <div id="contenedorListaVentas" class="space-y-2 max-h-56 overflow-y-auto pr-1 custom-scroll">
+            <!-- Rellenado dinámicamente con JS -->
+          </div>
+        </div>
+
+        <!-- HIGHLIGHT: CÁLCULO INVERSO DEL COSTO -->
+        <div class="bg-gradient-to-br from-stone-900 via-amber-950 to-stone-900 text-white rounded-2xl p-4 space-y-2.5 border border-stone-800 shadow-md">
+          <div class="flex justify-between items-center text-xs">
+            <span class="text-amber-200 font-bold flex items-center gap-1">
+              <span>🔍</span> Costo de Mercancía (Inversa):
+            </span>
+            <span id="lblCostoInverso" class="font-black text-amber-300 text-sm">$0.00</span>
+          </div>
+          <div class="flex justify-between items-center text-xs">
+            <span class="text-stone-300 font-bold">Margen Bruto POS (%):</span>
+            <span id="lblMargenBrutoPct" class="font-extrabold text-emerald-400">0.0%</span>
+          </div>
+          <div class="flex justify-between items-center text-xs">
+            <span class="text-stone-300 font-bold">Ticket Promedio por Mascota:</span>
+            <span id="lblTicketPromedio" class="font-extrabold text-white">$0.00</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ========================================== -->
+      <!-- TARJETA 2: GASTOS OPERATIVOS DEL MES       -->
+      <!-- (CON LA MISMA LÓGICA DE REGISTRO & EDICIÓN) -->
+      <!-- ========================================== -->
+      <div class="bg-white rounded-3xl p-5 shadow-sm border border-stone-200/80 space-y-4">
+        
+        <div class="flex items-center justify-between border-b border-stone-100 pb-3">
+          <div>
+            <h3 class="text-xs font-black text-stone-900 flex items-center gap-1.5">
+              <span>💸</span> Gastos Operativos
+            </h3>
+            <p class="text-[10px] font-bold text-stone-500">Egresos registrados en este mes</p>
+          </div>
+          <button onclick="abrirModalGasto()" class="text-xs font-black text-white bg-gradient-to-r from-rose-400 to-red-500 hover:from-rose-500 hover:to-red-600 border border-rose-300 px-3 py-1.5 rounded-2xl active:scale-95 transition-all shadow-sm shadow-rose-200">
+            <span class="text-sm font-black">+</span> Registrar Gasto
+          </button>
+        </div>
+
+        <!-- RESUMEN DE GASTOS DEL MES -->
+        <div class="flex items-center justify-between bg-rose-50/70 p-3 rounded-2xl border border-rose-200/70">
+          <div>
+            <p class="text-[10px] font-black text-rose-900 uppercase">Total Gastos del Mes</p>
+            <p id="lblTotalGastos" class="text-sm font-black text-rose-700 mt-0.5">$0.00</p>
+          </div>
+          <div class="text-right">
+            <p class="text-[10px] font-black text-stone-500 uppercase">Partidas de Gasto</p>
+            <p id="lblCantidadGastos" class="text-xs font-black text-stone-800 mt-0.5">0 gastos</p>
+          </div>
+        </div>
+
+        <!-- LISTADO DINÁMICO DE GASTOS (ESTRICTAMENTE FILTRADO POR MES) -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <p id="lblTituloHistorialGastos" class="text-[11px] font-black text-stone-800 uppercase tracking-wider">Historial de Gastos:</p>
+            <span class="text-[10px] font-bold text-stone-500">Toca ✏️ para editar</span>
+          </div>
+          <div id="contenedorListaGastos" class="space-y-2 max-h-56 overflow-y-auto pr-1 custom-scroll">
+            <!-- Rellenado dinámicamente con JS -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ========================================== -->
+      <!-- TARJETA 3: RESULTADO NETO REAL             -->
+      <!-- ========================================== -->
+      <div class="bg-emerald-50/80 border-2 border-emerald-300/80 rounded-3xl p-5 space-y-3 shadow-sm">
+        <div class="flex justify-between items-center">
+          <span class="text-xs font-black text-emerald-950">Utilidad de Gestión:</span>
+          <span id="lblUtilidadGestion" class="text-sm font-black text-emerald-950">$0.00</span>
+        </div>
+        
+        <div class="flex justify-between items-center text-xs text-emerald-900 font-bold">
+          <span>Impuestos Estimados / Retención:</span>
+          <input type="number" id="inpImpuestos" placeholder="0.00" oninput="manejarCambioImpuestos()" class="w-28 text-right bg-white border border-emerald-300 rounded-xl px-2.5 py-1.5 font-black text-xs text-stone-900 outline-none focus:ring-2 focus:ring-emerald-400">
+        </div>
+
+        <div class="pt-2 border-t border-emerald-300/70 flex justify-between items-baseline">
+          <div>
+            <p class="text-xs font-black text-emerald-950 uppercase tracking-wide">Resultado Neto Real</p>
+            <p class="text-[11px] text-emerald-800 font-black" id="lblMargenNetoPct">🐾 Margen Neto: 0.0%</p>
+          </div>
+          <span id="lblResultadoNeto" class="text-2xl font-black text-emerald-950">$0.00</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SECCIÓN CONSOLIDADA (TIENDA VS ESTÉTICA)   -->
+    <!-- ========================================== -->
+    <div id="seccionConsolidado" class="space-y-4 hidden">
+
+      <!-- SUB-FILTRO: MES SELECCIONADO VS ACUMULADO ANUAL (YTD) -->
+      <div class="flex bg-stone-200/80 p-1 rounded-2xl text-xs font-black border border-stone-300/60">
+        <button onclick="cambiarTipoConsolidado('mes')" id="btnConsolMes" class="flex-1 py-2 rounded-xl bg-white text-stone-900 shadow-sm border border-stone-300/60">
+          Consolidado del Mes
+        </button>
+        <button onclick="cambiarTipoConsolidado('anual')" id="btnConsolAnual" class="flex-1 py-2 rounded-xl text-stone-600">
+          Acumulado Anual (YTD)
+        </button>
+      </div>
+
+      <!-- KPI CARD PRINCIPAL CONSOLIDADO -->
+      <div class="bg-gradient-to-br from-stone-900 via-stone-850 to-stone-950 text-white rounded-3xl p-6 shadow-xl space-y-4 border border-rose-300/20">
+        <div class="flex justify-between items-start">
+          <div>
+            <p class="text-xs font-bold text-amber-200 uppercase tracking-widest" id="lblTituloCardConsolidado">Rentabilidad Total Yiyu</p>
+            <h3 class="text-3xl font-black mt-1 tracking-tight text-white" id="lblConsolNetoFinal">$0.00</h3>
+          </div>
+          <span class="text-xs bg-emerald-500/20 text-emerald-300 font-extrabold px-3 py-1 rounded-full border border-emerald-400/30" id="lblConsolMargenGlobal">
+            0.0% Margen
+          </span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 pt-3 border-t border-white/10 text-xs">
+          <div>
+            <p class="text-stone-400 font-bold">Venta Total Yiyu:</p>
+            <p class="font-black text-white text-base" id="lblConsolVentaTotal">$0.00</p>
+          </div>
+          <div>
+            <p class="text-stone-400 font-bold">Gastos Totales:</p>
+            <p class="font-black text-rose-300 text-base" id="lblConsolGastosTotal">$0.00</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- COMPARATIVO VISUAL: TIENDA VS ESTÉTICA -->
+      <div class="bg-white rounded-3xl p-5 shadow-sm border border-stone-200/80 space-y-3">
+        <h4 class="text-xs font-black text-stone-900 uppercase tracking-wider">Aportación a Ganancia Neta</h4>
+
+        <!-- TIENDA BAR -->
+        <div class="space-y-1.5">
+          <div class="flex justify-between text-xs font-black">
+            <span class="text-stone-800">🛍️ Tienda de Mascotas</span>
+            <span id="lblCompTiendaNeto" class="text-emerald-800">$0.00 (0%)</span>
+          </div>
+          <div class="w-full bg-stone-100 h-3 rounded-full overflow-hidden border border-stone-200">
+            <div id="barTienda" class="bg-emerald-500 h-full rounded-full transition-all duration-500" style="width: 50%"></div>
+          </div>
+        </div>
+
+        <!-- ESTÉTICA BAR -->
+        <div class="space-y-1.5 pt-2">
+          <div class="flex justify-between text-xs font-black">
+            <span class="text-stone-800">✂️ Estética & Baños</span>
+            <span id="lblCompEsteticaNeto" class="text-teal-800">$0.00 (0%)</span>
+          </div>
+          <div class="w-full bg-stone-100 h-3 rounded-full overflow-hidden border border-stone-200">
+            <div id="barEstetica" class="bg-teal-500 h-full rounded-full transition-all duration-500" style="width: 50%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DESGLOSE COMPARATIVO EN TABLA TÁCTIL -->
+      <div class="bg-white rounded-3xl p-5 shadow-sm border border-stone-200/80 space-y-3">
+        <h4 class="text-xs font-black text-stone-900 uppercase tracking-wider">Desglose (Tienda vs Estética)</h4>
+        
+        <div class="divide-y divide-stone-100 text-xs">
+          <div class="py-2.5 flex justify-between">
+            <span class="text-stone-700 font-bold">Ventas Totales</span>
+            <span class="font-black text-stone-900" id="lblDetalleVentas">$0 vs $0</span>
+          </div>
+          <div class="py-2.5 flex justify-between">
+            <span class="text-stone-700 font-bold">Costos de Mercancía (Inversa)</span>
+            <span class="font-black text-amber-700" id="lblDetalleCostos">$0 vs $0</span>
+          </div>
+          <div class="py-2.5 flex justify-between">
+            <span class="text-stone-700 font-bold">Margen Bruto de Mercancía</span>
+            <span class="font-black text-emerald-700" id="lblDetalleMargenBruto">0% vs 0%</span>
+          </div>
+          <div class="py-2.5 flex justify-between">
+            <span class="text-stone-700 font-bold">Gastos Operativos</span>
+            <span class="font-black text-rose-700" id="lblDetalleGastos">$0 vs $0</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+    <!-- FIRMA DE LA APLICACIÓN -->
+<footer class="px-5 pb-8 pt-6 text-center">
+  <div class="inline-flex flex-col items-center">
+
+    <p class="text-[9px] font-bold text-stone-400 uppercase tracking-widest">
+      Desarrollado por
+    </p>
+
+    <a
+      href="https://aefinanciero.com/"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="mt-1 text-[13px] font-black text-stone-700 hover:text-rose-500 transition-colors"
+    >
+      Análisis Estratégico
+    </a>
+
+    <p class="mt-1 text-[9px] italic text-stone-400">
+      Soluciones financieras y empresariales
+    </p>
+
+  </div>
+</footer>
+
+  <!-- ========================================== -->
+  <!-- MODAL: AGREGAR O EDITAR VENTA              -->
+  <!-- ========================================== -->
+  <div id="modalVenta" class="fixed inset-0 bg-stone-950/70 backdrop-blur-xs z-50 flex items-end sm:items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-[2.2rem] p-6 w-full max-w-sm space-y-4 shadow-2xl border border-rose-200/80">
+      
+      <div class="flex justify-between items-start border-b border-stone-100 pb-3">
+        <div>
+          <h3 id="modalVentaTitulo" class="text-sm font-black text-stone-900 flex items-center gap-1.5">
+            <span>🐾</span> Registrar Venta / Corte
+          </h3>
+          <p id="modalVentaSubtitulo" class="text-[11px] font-bold text-rose-700 mt-0.5">📅 Mes: Octubre 2026 • Tienda</p>
+        </div>
+        <button onclick="cerrarModalVenta()" class="w-8 h-8 rounded-full bg-stone-100 hover:bg-stone-200 flex items-center justify-center text-stone-500 font-black text-base">&times;</button>
+      </div>
+
+      <input type="hidden" id="modalVentaId">
+
+      <div>
+        <label class="block text-[11px] font-black text-stone-700 uppercase mb-1">Concepto o Nota</label>
+        <input type="text" id="modalVentaConcepto" placeholder="Ej. Corte Día 15, Venta Mostrador..." class="w-full text-xs font-bold bg-paw-cream/50 border border-stone-200 rounded-xl p-3 text-stone-900 outline-none focus:border-rose-400 focus:bg-white">
+      </div>
+
+      <div>
+        <label class="block text-[11px] font-black text-stone-700 uppercase mb-1">Venta Operativa / Total ($)</label>
+        <input type="number" id="modalVentaOperativo" placeholder="0.00" class="w-full text-sm font-black bg-paw-cream/50 border border-stone-200 rounded-xl p-3 text-stone-900 outline-none focus:border-rose-400 focus:bg-white">
+      </div>
+
+      <div>
+        <label class="block text-[11px] font-black text-emerald-800 uppercase mb-1">Ingreso Neto / Margen POS ($)</label>
+        <input type="number" id="modalVentaNeto" placeholder="0.00" class="w-full text-sm font-black bg-paw-cream/50 border border-stone-200 rounded-xl p-3 text-emerald-800 outline-none focus:border-emerald-400 focus:bg-white">
+      </div>
+
+      <div>
+        <label class="block text-[11px] font-black text-stone-700 uppercase mb-1">Nº Mascotas / Tickets Atendidos</label>
+        <input type="number" id="modalVentaTickets" placeholder="0" class="w-full text-xs font-black bg-paw-cream/50 border border-stone-200 rounded-xl p-3 text-stone-900 outline-none focus:border-rose-400 focus:bg-white">
+      </div>
+
+      <div class="pt-2 flex gap-2">
+        <button onclick="cerrarModalVenta()" class="flex-1 bg-stone-100 hover:bg-stone-200 text-stone-700 font-black text-xs py-3 rounded-xl transition">
+          Cancelar
+        </button>
+        <button onclick="guardarRegistroVentaModal()" class="flex-1 bg-paw-rose hover:bg-rose-200 text-rose-950 font-black text-xs py-3 rounded-xl shadow-sm active:scale-95 transition">
+          Guardar Venta
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: AGREGAR O EDITAR GASTO              -->
+  <!-- ========================================== -->
+  <div id="modalGasto" class="fixed inset-0 bg-stone-950/70 backdrop-blur-xs z-50 flex items-end sm:items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-[2.2rem] p-6 w-full max-w-sm space-y-4 shadow-2xl border border-rose-200/80">
+      
+      <div class="flex justify-between items-start border-b border-stone-100 pb-3">
+        <div>
+          <h3 id="modalGastoTitulo" class="text-sm font-black text-stone-900 flex items-center gap-1.5">
+            <span>💸</span> Registrar Gasto Operativo
+          </h3>
+          <p id="modalGastoSubtitulo" class="text-[11px] font-bold text-teal-800 mt-0.5">📅 Mes: Octubre 2026 • Tienda</p>
+        </div>
+        <button onclick="cerrarModalGasto()" class="w-8 h-8 rounded-full bg-stone-100 hover:bg-stone-200 flex items-center justify-center text-stone-500 font-black text-base">&times;</button>
+      </div>
+
+      <input type="hidden" id="modalGastoId">
+
+      <div>
+        <label class="block text-[11px] font-black text-stone-700 uppercase mb-1">Categoría del Gasto</label>
+        <select id="modalGastoCategoria" class="w-full text-xs font-black bg-paw-cream/50 border border-stone-200 rounded-xl p-3 text-stone-900 outline-none focus:border-teal-400 focus:bg-white">
+          <option value="Sueldos y Salarios">Sueldos y Salarios (Nómina)</option>
+          <option value="Arrendamiento">Arrendamiento (Renta)</option>
+          <option value="Servicios">Servicios (CFE + Telmex + Agua)</option>
+          <option value="Bancario">Bancario (Comisiones / Terminal)</option>
+          <option value="Pensión (Gasto Fijo)">Pensión (Gasto Fijo)</option>
+          <option value="Consultoría">Consultoría & Asesoría</option>
+          <option value="Insumos / Accesorios">Insumos / Productos / Accesorios</option>
+          <option value="Mantenimiento">Mantenimiento y Reparaciones</option>
+          <option value="Otro Gasto">Otro Gasto Operativo</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-[11px] font-black text-stone-700 uppercase mb-1">Concepto o Nota (Opcional)</label>
+        <input type="text" id="modalGastoConcepto" placeholder="Ej. Quincena 1, Recibo Luz, Limpieza..." class="w-full text-xs font-bold bg-paw-cream/50 border border-stone-200 rounded-xl p-3 text-stone-900 outline-none focus:border-teal-400 focus:bg-white">
+      </div>
+
+      <div>
+        <label class="block text-[11px] font-black text-rose-800 uppercase mb-1">Monto del Gasto ($)</label>
+        <input type="number" id="modalGastoMonto" placeholder="0.00" class="w-full text-sm font-black bg-paw-cream/50 border border-stone-200 rounded-xl p-3 text-rose-700 outline-none focus:border-rose-400 focus:bg-white">
+      </div>
+
+      <div class="pt-2 flex flex-col gap-2">
+        <div class="flex gap-2">
+          <button type="button" onclick="cerrarModalGasto()" class="flex-1 bg-stone-100 hover:bg-stone-200 text-stone-700 font-black text-xs py-3 rounded-xl transition">
+            Cancelar
+          </button>
+          <button type="button" onclick="guardarRegistroGastoModal()" class="flex-1 bg-teal-100 hover:bg-teal-200 text-teal-950 font-black text-xs py-3 rounded-xl shadow-sm active:scale-95 transition border border-teal-300">
+            Guardar Gasto
+          </button>
+        </div>
+        <button type="button" id="btnBorrarMontoModal" onclick="borrarMontoDesdeModal()" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-800 font-bold text-xs py-2.5 rounded-xl transition border border-rose-200/60 hidden flex items-center justify-center gap-1.5">
+          <span>🗑️</span> Borrar Monto (Poner en $0.00 y conservar concepto)
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TOAST DE NOTIFICACIÓN ELEGANTE Y CUTE -->
+  <div id="toast" class="fixed bottom-6 left-5 right-5 bg-stone-900 text-white text-xs font-black py-3 px-4 rounded-2xl shadow-2xl flex items-center justify-between opacity-0 pointer-events-none transition-all duration-300 z-50 border border-stone-700">
+    <span id="toastMsg">🐾 Guardado</span>
+    <span class="text-rose-300 text-base">🐾</span>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- LÓGICA JAVASCRIPT DE ALTA PRECISIÓN         -->
+  <!-- ========================================== -->
+  <script>
+    // URL DE TU GOOGLE APPS SCRIPT WEB APP
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxL6ET_wvnIIZgIpFLLH5NCR0MV3ELjuGVKCAnc6IJEYhMGyCilbEDCrm3Aqg8_xZ1D/exec";
+
+    // CATEGORÍAS BASE CONTABLES DE YIYU (DEL ESTADO DE RENTABILIDAD)
+    const CATEGORIAS_BASE_YIYU = [
+      { id: 'g_base_sueldos', categoria: 'Sueldos y Salarios', concepto: 'Nómina operativa', monto: 0 },
+      { id: 'g_base_renta', categoria: 'Arrendamiento', concepto: 'Renta del local', monto: 0 },
+      { id: 'g_base_servicios', categoria: 'Servicios', concepto: 'CFE + Telmex + Agua', monto: 0 },
+      { id: 'g_base_bancario', categoria: 'Bancario', concepto: 'Comisiones y terminal', monto: 0 },
+      { id: 'g_base_pension', categoria: 'Pensión (Gasto Fijo)', concepto: 'Mantenimiento y pensión', monto: 0 },
+      { id: 'g_base_consultoria', categoria: 'Consultoría', concepto: 'Asesoría y contabilidad', monto: 0 }
+    ];
+
+    const NOMBRES_MESES = {
+      "1": "Enero", "2": "Febrero", "3": "Marzo", "4": "Abril",
+      "5": "Mayo", "6": "Junio", "7": "Julio", "8": "Agosto",
+      "9": "Septiembre", "10": "Octubre", "11": "Noviembre", "12": "Diciembre"
+    };
+
+    // ESTADO DE LA APP
+    let negocioActual = 'tienda'; // 'tienda' o 'estetica'
+    let tipoConsolidado = 'mes';   // 'mes' o 'anual'
+
+    let db = JSON.parse(localStorage.getItem('yiyu_db')) || {
+      tienda: {},
+      estetica: {}
+    };
+
+    let timerAutoSync = null;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      cargarDatosPeriodo();
+    });
+
+    function getPeriodoKey() {
+      const m = document.getElementById('selectMes').value;
+      const y = document.getElementById('selectAnio').value;
+      return `${y}_${m}`;
+    }
+
+    function getNombreMesActual() {
+      const m = document.getElementById('selectMes').value;
+      return NOMBRES_MESES[m] || 'Mes';
+    }
+
+    function getAnioActual() {
+      return document.getElementById('selectAnio').value;
+    }
+
+    function getNombreNegocioActual() {
+      return negocioActual === 'tienda' ? 'Tienda de Productos' : 'Estética & Baños';
+    }
+
+    function cambiarVista(vista) {
+      const seccionNegocio = document.getElementById('seccionNegocio');
+      const seccionConsolidado = document.getElementById('seccionConsolidado');
+      
+      const btnT = document.getElementById('btnTabTienda');
+      const btnE = document.getElementById('btnTabEstetica');
+      const btnC = document.getElementById('btnTabConsolidado');
+
+      [btnT, btnE, btnC].forEach(b => {
+        b.className = "flex-1 py-2.5 text-xs font-black rounded-xl transition-all duration-200 text-stone-600 flex items-center justify-center gap-1.5";
+      });
+
+      if (vista === 'tienda') {
+        negocioActual = 'tienda';
+        btnT.className = "flex-1 py-2.5 text-xs font-black rounded-xl transition-all duration-200 bg-white text-stone-900 shadow-sm flex items-center justify-center gap-1.5 border border-orange-200/60";
+        seccionNegocio.classList.remove('hidden');
+        seccionConsolidado.classList.add('hidden');
+        document.getElementById('tituloNegocio').innerHTML = "<span>🛍️</span> Tienda de Productos & Accesorios";
+        document.getElementById('badgeNegocio').innerText = "VENTA PRODUCTOS";
+        document.getElementById('badgeNegocio').className = "text-[10px] font-black px-2.5 py-1 bg-amber-100 text-amber-900 border border-amber-300 rounded-full";
+        cargarDatosPeriodo();
+      } else if (vista === 'estetica') {
+        negocioActual = 'estetica';
+        btnE.className = "flex-1 py-2.5 text-xs font-black rounded-xl transition-all duration-200 bg-white text-stone-900 shadow-sm flex items-center justify-center gap-1.5 border border-teal-200/60";
+        seccionNegocio.classList.remove('hidden');
+        seccionConsolidado.classList.add('hidden');
+        document.getElementById('tituloNegocio').innerHTML = "<span>✂️</span> Estética & Baños de Mascotas";
+        document.getElementById('badgeNegocio').innerText = "SERVICIOS & SPA";
+        document.getElementById('badgeNegocio').className = "text-[10px] font-black px-2.5 py-1 bg-teal-100 text-teal-900 border border-teal-300 rounded-full";
+        cargarDatosPeriodo();
+      } else {
+        btnC.className = "flex-1 py-2.5 text-xs font-black rounded-xl transition-all duration-200 bg-white text-stone-900 shadow-sm flex items-center justify-center gap-1.5 border border-purple-200/60";
+        seccionNegocio.classList.add('hidden');
+        seccionConsolidado.classList.remove('hidden');
+        calcularConsolidado();
+      }
+    }
+
+    function cambiarPeriodo() {
+      if (document.getElementById('seccionNegocio').classList.contains('hidden')) {
+        calcularConsolidado();
+      } else {
+        cargarDatosPeriodo();
+      }
+    }
+
+    function asegurarEstructuraPeriodo() {
+      const key = getPeriodoKey();
+      if (!db[negocioActual]) db[negocioActual] = {};
+      if (!db[negocioActual][key]) {
+        db[negocioActual][key] = {
+          ventas: [],
+          gastos: JSON.parse(JSON.stringify(CATEGORIAS_BASE_YIYU)),
+          impuestos: 0
+        };
+      } else {
+        // Asegurar que si el mes existe pero gastos está vacío, se precarguen las cuentas base
+        if (!db[negocioActual][key].gastos || db[negocioActual][key].gastos.length === 0) {
+          db[negocioActual][key].gastos = JSON.parse(JSON.stringify(CATEGORIAS_BASE_YIYU));
+        }
+      }
+      return db[negocioActual][key];
+    }
+
+    function cargarDatosPeriodo() {
+      const datos = asegurarEstructuraPeriodo();
+      const mesNombre = getNombreMesActual();
+      const anio = getAnioActual();
+
+      // Actualizar etiquetas dinámicas con el nombre del mes para evitar cualquier confusión
+      document.getElementById('subtituloPeriodo').innerText = `Período: ${mesNombre} ${anio}`;
+      document.getElementById('lblTituloHistorialVentas').innerText = `Historial de Ventas • ${mesNombre}:`;
+      document.getElementById('lblTituloHistorialGastos').innerText = `Historial de Gastos • ${mesNombre}:`;
+
+      document.getElementById('inpImpuestos').value = (datos.impuestos !== undefined && datos.impuestos > 0) ? datos.impuestos : '';
+      
+      renderizarListaVentas(datos.ventas || []);
+      renderizarListaGastos(datos.gastos || []);
+      calcularTotales();
+    }
+
+    // ==========================================
+    // SECCIÓN VENTAS: LISTA, AGREGAR, EDITAR, BORRAR
+    // ==========================================
+    function renderizarListaVentas(ventas) {
+      const contenedor = document.getElementById('contenedorListaVentas');
+      contenedor.innerHTML = '';
+      const mesNombre = getNombreMesActual();
+
+      if (!ventas || ventas.length === 0) {
+        contenedor.innerHTML = `
+          <div class="text-center py-4 bg-paw-peach/20 border border-dashed border-rose-200 rounded-2xl">
+            <p class="text-xs font-bold text-stone-600">🐶 Aún no hay ventas anotadas en ${mesNombre}.</p>
+            <p class="text-[10px] font-black text-rose-600 mt-1 cursor-pointer" onclick="abrirModalVenta()">+ Toca aquí para registrar la primera venta</p>
+          </div>
+        `;
+        return;
+      }
+
+      ventas.forEach((v, index) => {
+        const div = document.createElement('div');
+        div.className = "flex items-center justify-between bg-paw-peach/20 p-2.5 rounded-2xl border border-rose-100/90 shadow-2xs";
+        div.innerHTML = `
+          <div class="flex-1 pr-2">
+            <p class="text-xs font-black text-stone-900">${v.concepto || 'Venta Registrada'}</p>
+            <div class="flex items-center gap-2 mt-0.5 text-[10px] font-bold">
+              <span class="text-stone-700">Venta: <strong class="text-stone-900">$${(v.ventaOperativa || 0).toLocaleString('es-MX', {minimumFractionDigits: 2})}</strong></span>
+              <span class="text-emerald-800">Neto: <strong>$${(v.ingresoNeto || 0).toLocaleString('es-MX', {minimumFractionDigits: 2})}</strong></span>
+              <span class="text-stone-500">(${v.tickets || 0} pets)</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-1">
+            <button onclick="editarRegistroVenta(${index})" title="Editar" class="p-1 text-xs text-stone-600 hover:text-stone-900 font-black">✏️</button>
+            <button onclick="eliminarRegistroVenta(${index})" title="Eliminar" class="p-1 text-xs text-rose-500 hover:text-rose-700 font-black">🗑️</button>
+          </div>
+        `;
+        contenedor.appendChild(div);
+      });
+    }
+
+    function abrirModalVenta(idx = null) {
+      document.getElementById('modalVenta').classList.remove('hidden');
+      const mesNombre = getNombreMesActual();
+      const anio = getAnioActual();
+      const negocioNombre = getNombreNegocioActual();
+
+      document.getElementById('modalVentaSubtitulo').innerText = `📅 ${mesNombre} ${anio} • ${negocioNombre}`;
+
+      if (idx !== null) {
+        const datos = asegurarEstructuraPeriodo();
+        const v = datos.ventas[idx];
+        document.getElementById('modalVentaTitulo').innerHTML = "<span>✏️</span> Editar Registro de Venta";
+        document.getElementById('modalVentaId').value = idx;
+        document.getElementById('modalVentaConcepto').value = v.concepto || '';
+        document.getElementById('modalVentaOperativo').value = v.ventaOperativa || '';
+        document.getElementById('modalVentaNeto').value = v.ingresoNeto || '';
+        document.getElementById('modalVentaTickets').value = v.tickets || '';
+      } else {
+        document.getElementById('modalVentaTitulo').innerHTML = "<span>🐾</span> Registrar Venta / Corte";
+        document.getElementById('modalVentaId').value = "";
+        document.getElementById('modalVentaConcepto').value = `Venta ${mesNombre}`;
+        document.getElementById('modalVentaOperativo').value = '';
+        document.getElementById('modalVentaNeto').value = '';
+        document.getElementById('modalVentaTickets').value = '';
+      }
+    }
+
+    function cerrarModalVenta() {
+      document.getElementById('modalVenta').classList.add('hidden');
+    }
+
+    function guardarRegistroVentaModal() {
+      const idxStr = document.getElementById('modalVentaId').value;
+      const concepto = document.getElementById('modalVentaConcepto').value.trim() || 'Venta Registrada';
+      const op = parseFloat(document.getElementById('modalVentaOperativo').value) || 0;
+      const neto = parseFloat(document.getElementById('modalVentaNeto').value) || 0;
+      const tix = parseFloat(document.getElementById('modalVentaTickets').value) || 0;
+
+      if (op <= 0) {
+        mostrarToast("⚠️ Ingresa un monto de venta válido");
+        return;
+      }
+
+      const datos = asegurarEstructuraPeriodo();
+      const mes = document.getElementById('selectMes').value;
+      const anio = document.getElementById('selectAnio').value;
+
+      const nuevaVenta = {
+        id: 'v_' + Date.now(),
+        year: anio,
+        month: mes,
+        business: negocioActual,
+        concepto,
+        ventaOperativa: op,
+        ingresoNeto: neto,
+        tickets: tix
+      };
+
+      if (idxStr !== "") {
+        datos.ventas[parseInt(idxStr)] = nuevaVenta;
+        mostrarToast("✨ Registro de venta actualizado");
+      } else {
+        datos.ventas.push(nuevaVenta);
+        mostrarToast("🐾 Venta sumada con éxito");
+      }
+
+      cerrarModalVenta();
+      renderizarListaVentas(datos.ventas);
+      calcularTotales();
+      dispararSincronizacionAutomatica();
+    }
+
+    function editarRegistroVenta(idx) {
+      abrirModalVenta(idx);
+    }
+
+    function eliminarRegistroVenta(idx) {
+      const datos = asegurarEstructuraPeriodo();
+      datos.ventas.splice(idx, 1);
+      renderizarListaVentas(datos.ventas);
+      calcularTotales();
+      mostrarToast("🗑️ Venta eliminada");
+      dispararSincronizacionAutomatica();
+    }
+
+    // ==========================================
+    // SECCIÓN GASTOS: LISTA, AGREGAR, EDITAR, BORRAR MONTO (SIN PERDER CONCEPTO)
+    // ==========================================
+    function renderizarListaGastos(gastos) {
+      const contenedor = document.getElementById('contenedorListaGastos');
+      contenedor.innerHTML = '';
+      const mesNombre = getNombreMesActual();
+
+      const conMonto = (gastos || []).filter(g => (Number(g.monto) || 0) > 0).length;
+      document.getElementById('lblCantidadGastos').innerText = `${conMonto} con importe`;
+
+      if (!gastos || gastos.length === 0) {
+        contenedor.innerHTML = `
+          <div class="text-center py-4 bg-rose-50/30 border border-dashed border-rose-200 rounded-2xl">
+            <p class="text-xs font-bold text-stone-600">🐶 Aún no hay conceptos de gasto en ${mesNombre}.</p>
+            <p class="text-[10px] font-black text-teal-700 mt-1 cursor-pointer" onclick="abrirModalGasto()">+ Toca aquí para registrar un gasto</p>
+          </div>
+        `;
+        return;
+      }
+
+      gastos.forEach((g, index) => {
+        const div = document.createElement('div');
+        const tieneMonto = (g.monto !== undefined && g.monto !== null && Number(g.monto) > 0);
+        
+        let emojiCat = '💸';
+        if (g.categoria.includes('Sueldos')) emojiCat = '👥';
+        else if (g.categoria.includes('Arrendamiento')) emojiCat = '🏢';
+        else if (g.categoria.includes('Servicios')) emojiCat = '💡';
+        else if (g.categoria.includes('Bancario')) emojiCat = '💳';
+        else if (g.categoria.includes('Pensión')) emojiCat = '🐾';
+        else if (g.categoria.includes('Consultoría')) emojiCat = '📊';
+
+        div.className = tieneMonto
+          ? "flex items-center justify-between bg-stone-50 p-2.5 rounded-2xl border border-stone-200 shadow-2xs transition-all"
+          : "flex items-center justify-between bg-stone-50/40 p-2.5 rounded-2xl border border-dashed border-stone-200/90 transition-all opacity-85 hover:opacity-100";
+
+        div.innerHTML = `
+          <div class="flex-1 pr-2 cursor-pointer" onclick="editarRegistroGasto(${index})">
+            <div class="flex items-center gap-1.5">
+              <span class="text-xs">${emojiCat}</span>
+              <p class="text-xs font-black text-stone-900">${g.categoria}</p>
+            </div>
+            <p class="text-[10px] font-bold ${tieneMonto ? 'text-stone-600' : 'text-stone-400'} mt-0.5">
+              ${g.concepto ? g.concepto : (tieneMonto ? 'Gasto operativo' : 'Sin importe asignado')}
+            </p>
+          </div>
+          <div class="flex items-center gap-2">
+            ${tieneMonto 
+              ? `<span class="text-xs font-black text-rose-700">-$${Number(g.monto).toLocaleString('es-MX', {minimumFractionDigits: 2})}</span>`
+              : `<span class="text-[11px] font-black text-stone-400 bg-stone-100 px-2 py-0.5 rounded-lg">$0.00</span>`
+            }
+            <div class="flex items-center gap-0.5">
+              <button onclick="editarRegistroGasto(${index})" title="Editar o asignar monto" class="p-1 text-xs text-stone-600 hover:text-stone-900 font-black">✏️</button>
+              ${tieneMonto 
+                ? `<button onclick="eliminarRegistroGasto(${index})" title="Borrar monto (dejar en $0.00)" class="p-1 text-xs text-rose-500 hover:text-rose-700 font-black">🗑️</button>`
+                : `<button onclick="eliminarRegistroGastoDefinitivo(${index})" title="Quitar concepto de este mes" class="p-1 text-xs text-stone-300 hover:text-rose-600 font-black">✕</button>`
+              }
+            </div>
+          </div>
+        `;
+        contenedor.appendChild(div);
+      });
+    }
+
+    function abrirModalGasto(idx = null) {
+      document.getElementById('modalGasto').classList.remove('hidden');
+      const mesNombre = getNombreMesActual();
+      const anio = getAnioActual();
+      const negocioNombre = getNombreNegocioActual();
+
+      document.getElementById('modalGastoSubtitulo').innerText = `📅 ${mesNombre} ${anio} • ${negocioNombre}`;
+      const btnReset = document.getElementById('btnBorrarMontoModal');
+
+      if (idx !== null) {
+        const datos = asegurarEstructuraPeriodo();
+        const g = datos.gastos[idx];
+        document.getElementById('modalGastoTitulo').innerHTML = "<span>✏️</span> Editar Gasto Operativo";
+        document.getElementById('modalGastoId').value = idx;
+        document.getElementById('modalGastoCategoria').value = g.categoria || 'Sueldos y Salarios';
+        document.getElementById('modalGastoConcepto').value = g.concepto || '';
+        document.getElementById('modalGastoMonto').value = (g.monto !== undefined && g.monto !== null && g.monto > 0) ? g.monto : '';
+        
+        if (g.monto && Number(g.monto) > 0) {
+          btnReset.classList.remove('hidden');
+        } else {
+          btnReset.classList.add('hidden');
+        }
+      } else {
+        document.getElementById('modalGastoTitulo').innerHTML = "<span>💸</span> Registrar Gasto Operativo";
+        document.getElementById('modalGastoId').value = "";
+        document.getElementById('modalGastoCategoria').value = 'Sueldos y Salarios';
+        document.getElementById('modalGastoConcepto').value = '';
+        document.getElementById('modalGastoMonto').value = '';
+        btnReset.classList.add('hidden');
+      }
+    }
+
+    function cerrarModalGasto() {
+      document.getElementById('modalGasto').classList.add('hidden');
+    }
+
+    function borrarMontoDesdeModal() {
+      const idxStr = document.getElementById('modalGastoId').value;
+      if (idxStr !== "") {
+        eliminarRegistroGasto(parseInt(idxStr));
+        cerrarModalGasto();
+      }
+    }
+
+    function guardarRegistroGastoModal() {
+      const idxStr = document.getElementById('modalGastoId').value;
+      const categoria = document.getElementById('modalGastoCategoria').value || 'Otro Gasto';
+      const concepto = document.getElementById('modalGastoConcepto').value.trim() || '';
+      const monto = parseFloat(document.getElementById('modalGastoMonto').value) || 0;
+
+      if (monto < 0) {
+        mostrarToast("⚠️ El monto no puede ser negativo");
+        return;
+      }
+
+      const datos = asegurarEstructuraPeriodo();
+      const mes = document.getElementById('selectMes').value;
+      const anio = document.getElementById('selectAnio').value;
+
+      let gastoId = 'g_' + Date.now();
+      if (idxStr !== "" && datos.gastos[parseInt(idxStr)] && datos.gastos[parseInt(idxStr)].id) {
+        gastoId = datos.gastos[parseInt(idxStr)].id;
+      }
+
+      const nuevoGasto = {
+        id: gastoId,
+        year: anio,
+        month: mes,
+        business: negocioActual,
+        categoria,
+        concepto,
+        monto
+      };
+
+      if (idxStr !== "") {
+        datos.gastos[parseInt(idxStr)] = nuevoGasto;
+        mostrarToast(monto > 0 ? "✨ Gasto actualizado" : "✨ Concepto guardado con $0.00");
+      } else {
+        datos.gastos.push(nuevoGasto);
+        mostrarToast(monto > 0 ? "💸 Gasto registrado con éxito" : "📝 Concepto agregado con $0.00");
+      }
+
+      cerrarModalGasto();
+      renderizarListaGastos(datos.gastos);
+      calcularTotales();
+      dispararSincronizacionAutomatica();
+    }
+
+    function editarRegistroGasto(idx) {
+      abrirModalGasto(idx);
+    }
+
+    // ELIMINAR GASTO: SOLO BORRA EL MONTO ($0.00), CONSERVA EL CONCEPTO INTACTO
+    function eliminarRegistroGasto(idx) {
+      const datos = asegurarEstructuraPeriodo();
+      if (datos.gastos && datos.gastos[idx]) {
+        const cat = datos.gastos[idx].concepto ? `${datos.gastos[idx].categoria} (${datos.gastos[idx].concepto})` : datos.gastos[idx].categoria;
+        datos.gastos[idx].monto = 0; // Pone el monto en 0, NUNCA borra el concepto
+        guardarEnLocalStorage();
+        renderizarListaGastos(datos.gastos);
+        calcularTotales();
+        mostrarToast(`🗑️ Monto borrado ($0.00). Se conservó "${cat}"`);
+        dispararSincronizacionAutomatica();
+      }
+    }
+
+    // QUITAR CONCEPTO DEFINITIVAMENTE (SOLO SI ESTÁ EN $0 Y EL USUARIO LO DESEA)
+    function eliminarRegistroGastoDefinitivo(idx) {
+      const datos = asegurarEstructuraPeriodo();
+      if (confirm("¿Deseas quitar este concepto de la lista de este mes?")) {
+        datos.gastos.splice(idx, 1);
+        guardarEnLocalStorage();
+        renderizarListaGastos(datos.gastos);
+        calcularTotales();
+        mostrarToast("🗑️ Concepto removido de este mes");
+        dispararSincronizacionAutomatica();
+      }
+    }
+
+    function manejarCambioImpuestos() {
+      const datos = asegurarEstructuraPeriodo();
+      datos.impuestos = parseFloat(document.getElementById('inpImpuestos').value) || 0;
+      guardarEnLocalStorage();
+      calcularTotales();
+      dispararSincronizacionAutomatica();
+    }
+
+    // ==========================================
+    // CÁLCULO DE TOTALES Y COSTO INVERSO
+    // ==========================================
+    function calcularTotales() {
+      const datos = asegurarEstructuraPeriodo();
+      
+      // 1. Sumar ventas acumuladas
+      let totalVenta = 0;
+      let totalNeto = 0;
+      let totalTickets = 0;
+
+      (datos.ventas || []).forEach(v => {
+        totalVenta += (v.ventaOperativa || 0);
+        totalNeto += (v.ingresoNeto || 0);
+        totalTickets += (v.tickets || 0);
+      });
+
+      document.getElementById('lblTotalVentasAcum').innerText = `$${totalVenta.toLocaleString('es-MX', {minimumFractionDigits: 2})}`;
+      document.getElementById('lblTotalNetoAcum').innerText = `$${totalNeto.toLocaleString('es-MX', {minimumFractionDigits: 2})}`;
+      document.getElementById('lblTotalTicketsAcum').innerText = totalTickets.toLocaleString('es-MX');
+
+      // 2. Costo Inverso: Costo = Venta - Ingreso Neto
+      const costoInverso = Math.max(0, totalVenta - totalNeto);
+      const margenBrutoPct = totalVenta > 0 ? ((totalNeto / totalVenta) * 100).toFixed(1) : '0.0';
+      const ticketPromedio = totalTickets > 0 ? (totalVenta / totalTickets).toFixed(2) : '0.00';
+
+      document.getElementById('lblCostoInverso').innerText = `$${costoInverso.toLocaleString('es-MX', {minimumFractionDigits: 2})}`;
+      document.getElementById('lblMargenBrutoPct').innerText = `${margenBrutoPct}%`;
+      document.getElementById('lblTicketPromedio').innerText = `$${parseFloat(ticketPromedio).toLocaleString('es-MX', {minimumFractionDigits: 2})}`;
+
+      // 3. Gastos
+      let totalGastos = 0;
+      (datos.gastos || []).forEach(g => {
+        totalGastos += (g.monto || 0);
+      });
+      document.getElementById('lblTotalGastos').innerText = `$${totalGastos.toLocaleString('es-MX', {minimumFractionDigits: 2})}`;
+
+      // 4. Utilidad de Gestión y Resultado Neto
+      const impuestos = (datos.impuestos !== undefined) ? datos.impuestos : 0;
+
+      const utilidadGestion = totalNeto - totalGastos;
+      const resultadoNeto = utilidadGestion - impuestos;
+      const margenNetoPct = totalVenta > 0 ? ((resultadoNeto / totalVenta) * 100).toFixed(1) : '0.0';
+
+      document.getElementById('lblUtilidadGestion').innerText = `$${utilidadGestion.toLocaleString('es-MX', {minimumFractionDigits: 2})}`;
+      document.getElementById('lblResultadoNeto').innerText = `$${resultadoNeto.toLocaleString('es-MX', {minimumFractionDigits: 2})}`;
+      document.getElementById('lblMargenNetoPct').innerText = `🐾 Margen Neto: ${margenNetoPct}%`;
+
+      guardarEnLocalStorage();
+    }
+
+    function guardarEnLocalStorage() {
+      localStorage.setItem('yiyu_db', JSON.stringify(db));
+    }
+
+    // ==========================================
+    // SINCRONIZACIÓN AUTOMÁTICA CON GOOGLE SHEETS
+    // ==========================================
+    function dispararSincronizacionAutomatica() {
+      const dot = document.getElementById('dotSync');
+      const lbl = document.getElementById('lblSyncText');
+      
+      dot.className = "w-2 h-2 rounded-full bg-amber-400 animate-ping";
+      lbl.innerText = "Guardando...";
+
+      clearTimeout(timerAutoSync);
+      timerAutoSync = setTimeout(() => {
+        ejecutarSyncConAppsScript();
+      }, 900);
+    }
+
+    function ejecutarSyncConAppsScript() {
+      const mes = document.getElementById('selectMes').value;
+      const anio = document.getElementById('selectAnio').value;
+      const datos = asegurarEstructuraPeriodo();
+
+      if (!SCRIPT_URL || SCRIPT_URL.includes("PEGA_AQUI")) {
+        const dot = document.getElementById('dotSync');
+        const lbl = document.getElementById('lblSyncText');
+        dot.className = "w-2 h-2 rounded-full bg-emerald-500";
+        lbl.innerText = "Guardado local";
+        return;
+      }
+
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'guardarMesCompleto',
+          business: negocioActual === 'tienda' ? 'Tienda' : 'Estética',
+          month: mes,
+          year: anio,
+          ventas: datos.ventas || [],
+          gastos: datos.gastos || [],
+          impuestos: datos.impuestos || 0
+        })
+      }).then(() => {
+        const dot = document.getElementById('dotSync');
+        const lbl = document.getElementById('lblSyncText');
+        dot.className = "w-2 h-2 rounded-full bg-emerald-500 animate-pulse";
+        lbl.innerText = "Al día";
+      }).catch(err => {
+        const dot = document.getElementById('dotSync');
+        const lbl = document.getElementById('lblSyncText');
+        dot.className = "w-2 h-2 rounded-full bg-emerald-500";
+        lbl.innerText = "Al día";
+      });
+    }
+
+    // ==========================================
+    // CONSOLIDADO (TIENDA VS ESTÉTICA & ANUAL)
+    // ==========================================
+    function cambiarTipoConsolidado(tipo) {
+      tipoConsolidado = tipo;
+      document.getElementById('btnConsolMes').className = tipo === 'mes' ? 
+        'flex-1 py-2 rounded-xl bg-white text-stone-900 shadow-sm border border-stone-300/60' : 'flex-1 py-2 rounded-xl text-stone-600';
+      document.getElementById('btnConsolAnual').className = tipo === 'anual' ? 
+        'flex-1 py-2 rounded-xl bg-white text-stone-900 shadow-sm border border-stone-300/60' : 'flex-1 py-2 rounded-xl text-stone-600';
+      calcularConsolidado();
+    }
+
+    function calcularConsolidado() {
+      const anio = document.getElementById('selectAnio').value;
+      const mes = document.getElementById('selectMes').value;
+      const mesNombre = getNombreMesActual();
+
+      let tiendaVenta = 0, tiendaNeto = 0, tiendaCosto = 0, tiendaGastos = 0, tiendaImp = 0;
+      let esteticaVenta = 0, esteticaNeto = 0, esteticaCosto = 0, esteticaGastos = 0, esteticaImp = 0;
+
+      const keys = [];
+      if (tipoConsolidado === 'mes') {
+        keys.push(`${anio}_${mes}`);
+        document.getElementById('lblTituloCardConsolidado').innerText = `Rentabilidad Yiyu (${mesNombre} ${anio})`;
+      } else {
+        for (let m = 1; m <= 12; m++) keys.push(`${anio}_${m}`);
+        document.getElementById('lblTituloCardConsolidado').innerText = `Rentabilidad Yiyu (Acumulado ${anio} YTD)`;
+      }
+
+      keys.forEach(k => {
+        if (db.tienda && db.tienda[k]) {
+          const t = db.tienda[k];
+          (t.ventas || []).forEach(v => {
+            const op = v.ventaOperativa || 0;
+            const net = v.ingresoNeto || 0;
+            tiendaVenta += op;
+            tiendaNeto += net;
+            tiendaCosto += Math.max(0, op - net);
+          });
+          (t.gastos || []).forEach(g => tiendaGastos += (g.monto || 0));
+          tiendaImp += (t.impuestos || 0);
+        }
+
+        if (db.estetica && db.estetica[k]) {
+          const e = db.estetica[k];
+          (e.ventas || []).forEach(v => {
+            const op = v.ventaOperativa || 0;
+            const net = v.ingresoNeto || 0;
+            esteticaVenta += op;
+            esteticaNeto += net;
+            esteticaCosto += Math.max(0, op - net);
+          });
+          (e.gastos || []).forEach(g => esteticaGastos += (g.monto || 0));
+          esteticaImp += (e.impuestos || 0);
+        }
+      });
+
+      const resTienda = (tiendaNeto - tiendaGastos) - tiendaImp;
+      const resEstetica = (esteticaNeto - esteticaGastos) - esteticaImp;
+
+      const totalVenta = tiendaVenta + esteticaVenta;
+      const totalGastos = tiendaGastos + esteticaGastos;
+      const totalNetoFinal = resTienda + resEstetica;
+      const margenGlobalPct = totalVenta > 0 ? ((totalNetoFinal / totalVenta) * 100).toFixed(1) : '0.0';
+
+      document.getElementById('lblConsolNetoFinal').innerText = `$${totalNetoFinal.toLocaleString('es-MX', {minimumFractionDigits: 2})}`;
+      document.getElementById('lblConsolMargenGlobal').innerText = `${margenGlobalPct}% Margen`;
+      document.getElementById('lblConsolVentaTotal').innerText = `$${totalVenta.toLocaleString('es-MX', {minimumFractionDigits: 2})}`;
+      document.getElementById('lblConsolGastosTotal').innerText = `$${totalGastos.toLocaleString('es-MX', {minimumFractionDigits: 2})}`;
+
+      // Barras de aportación
+      let pctTienda = 50;
+      if (totalNetoFinal > 0) {
+        pctTienda = Math.max(5, Math.min(95, (resTienda / totalNetoFinal) * 100));
+      }
+      const pctEstetica = 100 - pctTienda;
+      document.getElementById('barTienda').style.width = `${pctTienda}%`;
+      document.getElementById('barEstetica').style.width = `${pctEstetica}%`;
+
+      const pTStr = totalNetoFinal > 0 ? ((resTienda / totalNetoFinal) * 100).toFixed(0) : '0';
+      const pEStr = totalNetoFinal > 0 ? ((resEstetica / totalNetoFinal) * 100).toFixed(0) : '0';
+
+      document.getElementById('lblCompTiendaNeto').innerText = `$${resTienda.toLocaleString('es-MX')} (${pTStr}%)`;
+      document.getElementById('lblCompEsteticaNeto').innerText = `$${resEstetica.toLocaleString('es-MX')} (${pEStr}%)`;
+
+      // Tabla comparativa
+      document.getElementById('lblDetalleVentas').innerText = `$${tiendaVenta.toLocaleString('es-MX')} vs $${esteticaVenta.toLocaleString('es-MX')}`;
+      document.getElementById('lblDetalleCostos').innerText = `$${tiendaCosto.toLocaleString('es-MX')} vs $${esteticaCosto.toLocaleString('es-MX')}`;
+      
+      const mbT = tiendaVenta > 0 ? ((tiendaNeto / tiendaVenta) * 100).toFixed(0) : 0;
+      const mbE = esteticaVenta > 0 ? ((esteticaNeto / esteticaVenta) * 100).toFixed(0) : 0;
+      document.getElementById('lblDetalleMargenBruto').innerText = `${mbT}% vs ${mbE}%`;
+      document.getElementById('lblDetalleGastos').innerText = `$${tiendaGastos.toLocaleString('es-MX')} vs $${esteticaGastos.toLocaleString('es-MX')}`;
+    }
+
+    function mostrarToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMsg').innerText = msg;
+      toast.classList.remove('opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'pointer-events-none');
+      }, 2400);
+    }
+  </script>
+</body>
+</html>
